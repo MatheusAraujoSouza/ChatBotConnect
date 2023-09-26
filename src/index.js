@@ -1,5 +1,4 @@
 const express = require("express");
-require("openai");
 const router = require("./app/router");
 
 app.use(express.json());

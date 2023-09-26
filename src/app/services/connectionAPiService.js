@@ -1,7 +1,7 @@
 
 const axios = require('axios');
-const bard = require('bard');
-
+import Bard from "bard-ai";
+const bard = new Bard(YOUR_BARD_API_COOKIE);
 const generateDocumentation = async (url) => {
   try {
 
@@ -13,11 +13,7 @@ const generateDocumentation = async (url) => {
       2
     )}`;
 
-    const { data: generatedDocumentation } = await bard.createCompletion({
-      engine: 'text-davinci-002',
-      prompt: documentationRequest,
-      max_tokens: 200,
-    });
+    const { data: generatedDocumentation } = await bard.ask(documentationRequest);
 
     return generatedDocumentation;
   } catch (error) {
