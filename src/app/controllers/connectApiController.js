@@ -3,7 +3,10 @@ const connectionAPiService = require('../services/connectionAPiService');
 // GET /connect-to-other-api
 const getConnection = async (req, res) => {
   try {
-    const generatedDocumentation = await connectionAPiService.generateDocumentation();
+
+    const { url } = req.params;
+
+    const generatedDocumentation = await connectionAPiService.generateDocumentation(url);
 
     res.json({ documentation: generatedDocumentation });
   } catch (error) {
