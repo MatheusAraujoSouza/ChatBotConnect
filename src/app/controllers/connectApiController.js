@@ -1,12 +1,18 @@
 const connectionAPiService = require('../services/connectionAPiService');
+const connectService = new connectionAPiService(process.env.BARD_API_KEY);
 
-// GET /connect-to-other-api
+// post /connect-to-other-api
 const getConnection = async (req, res) => {
   try {
 
-    const { url } = req.params;
+    const { url, message } = req.body;
 
-    const generatedDocumentation = await connectionAPiService.generateDocumentation(url);
+    const requestData = {
+      url,
+      message,
+    };
+
+    const generatedDocumentation = await connectService.generateDocumentation(requestData);
 
     res.json({ documentation: generatedDocumentation });
   } catch (error) {

@@ -1,38 +1,50 @@
-
 const axios = require('axios');
-process.env.BARD_API_KEY = '??';
 const { BardAPI } = require('bard-api-node');
-const assistant = new BardAPI();
-const generateDocumentation = async (url) => {
-  try {
-    await MakeAssistant();
-    const response = await axios.get(url); 
-    
-    const documentationRequest = `Generate API documentation for the other API:\n\n${JSON.stringify(
-      response.data,
-      null,
-      2
-    )}`;
 
-    const generatedDocumentation = await assistant.getBardResponse(documentationRequest);
+class ConnectionAPiService {
 
-    return JSON.parse(generatedDocumentation);
-
-  } catch (error) {
-    console.error('Error generating documentation:', error.message);
-    throw error;
+  constructor(apiKey) {
+    this.assistant = new BardAPI();;
+    this.apiKey = apiKey;
   }
-};
 
-async function MakeAssistant(){
-  try{
-    await assistant.setSession('__Secure-1PSID', process.env.BARD_API_KEY);
-  }catch(error){
-    console.error('Error generating session:', error.message);
-    throw error;
+  async initializeAssistant() {
+    try {
+      await this.assistant.setSession('__Secure-1PSID', this.apiKey);
+    } catch (error) {
+      console.error('Error generating session:', error.message);
+      throw error;
+    }
+  }
+
+  async generateDocumentation(requestData) {
+    try {
+      await this.initializeAssistant();
+      // const response = await axios.get(requestData.url);
+
+      // const documentationRequest = `${requestData.message}:\n\n${JSON.stringify(
+      //   response.data
+      // )}`;
+
+      const documentationRequest = requestData.message;
+
+
+      const generatedDocumentation = await this.assistant.getBardResponse(
+        documentationRequest
+      );
+
+      const response = {
+        text: generatedDocumentation.content
+      };
+
+      const jsonObject = JSON.stringify(response);
+
+      return jsonObject;
+    } catch (error) {
+      console.error('Error generating documentation:', error.message);
+      throw error;
+    }
   }
 }
 
-module.exports = {
-  generateDocumentation,
-};
+module.exports = ConnectionAPiService;
