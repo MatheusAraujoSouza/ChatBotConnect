@@ -1,28 +1,49 @@
-const connectionAPiService = require('../services/connectionAPiService');
+const connectionAPiService = require("../services/connectionAPiService");
 const connectService = new connectionAPiService(process.env.BARD_API_KEY);
 
-// post /connect-to-other-api
-const getConnection = async (req, res) => {
+// get /simple-communication
+const simpleCommmunication = async (req, res) => {
   try {
+    const { message } = req.body;
+    const requestData = {
+      message,
+    };
+    const generatedDocumentation = await connectService.generateSimpleReponse(
+      requestData
+    );
 
+    res.json({ response: generatedDocumentation });
+  } catch (error) {
+    console.error("Error connecting to the other API:", error.message);
+    res
+      .status(500)
+      .json({ error: "An error occurred while connecting to the other API." });
+  }
+};
+
+// get /communication-with-context
+const communicationWithContext = async (req, res) => {
+  try {
     const { url, message } = req.body;
-
     const requestData = {
       url,
       message,
     };
 
-    const generatedDocumentation = await connectService.generateDocumentation(requestData);
+    const generatedDocumentation = await connectService.generateMiddleResponse(
+      requestData
+    );
 
-    res.json({ documentation: generatedDocumentation });
+    res.json({ response: generatedDocumentation });
   } catch (error) {
-    console.error('Error connecting to the other API:', error.message);
+    console.error("Error connecting to the other API:", error.message);
     res
       .status(500)
-      .json({ error: 'An error occurred while connecting to the other API.' });
+      .json({ error: "An error occurred while connecting to the other API." });
   }
 };
 
 module.exports = {
-  getConnection,
+  communicationWithContext,
+  simpleCommmunication,
 };

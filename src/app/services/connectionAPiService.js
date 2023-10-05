@@ -1,11 +1,13 @@
 const axios = require('axios');
 const { BardAPI } = require('bard-api-node');
+const cheerio = require('cheerio');
+var JSSoup = require('jssoup').default;
 
 class ConnectionAPiService {
 
   constructor(apiKey) {
-    this.assistant = new BardAPI();;
-    this.apiKey = apiKey;
+    this.assistant = new BardAPI();
+    this.apiKey = 'bgjGlaVYxSj3xUVRoNHq0HlxHf0_VgxS4oAFJd6tQryS5fVtfRD7kE6CfOH6db20qWEC7A.';
   }
 
   async initializeAssistant() {
@@ -17,31 +19,35 @@ class ConnectionAPiService {
     }
   }
 
-  async generateDocumentation(requestData) {
+  async generateMiddleResponse(requestData) {
     try {
       await this.initializeAssistant();
-      // const response = await axios.get(requestData.url);
-
-      // const documentationRequest = `${requestData.message}:\n\n${JSON.stringify(
-      //   response.data
-      // )}`;
-
-      const documentationRequest = requestData.message;
-
-
-      const generatedDocumentation = await this.assistant.getBardResponse(
+      const axiosResponse = await axios.get(requestData.url);
+      const soup = new JSSoup(axiosResponse.data, false);
+      const text = soup.findAll('lyrics');
+      const documentationRequest = `${requestData.message}:\n\n${text}`;
+      const generatedDocumentation = this.assistant.getBardResponse(
         documentationRequest
       );
-
-      const response = {
-        text: generatedDocumentation.content
-      };
-
-      const jsonObject = JSON.stringify(response);
-
-      return jsonObject;
+      return generatedDocumentation.content;
     } catch (error) {
       console.error('Error generating documentation:', error.message);
+      throw error;
+    }
+  }
+
+  async generateSimpleReponse(requestData) {
+    try {
+      await this.initializeAssistant();
+
+      const simpleRequest = requestData.message;
+
+      const generatedResponse = await this.assistant.getBardResponse(
+        simpleRequest
+      );
+      return generatedResponse.content;
+    } catch (error) {
+      console.error('Error generating simple response:', error.message);
       throw error;
     }
   }
