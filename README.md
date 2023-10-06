@@ -20,10 +20,6 @@ Here's an example of how to set the environment variable in a Unix/Linux-based s
 export BARD_API_KEY=your-api-key-goes-here
 ```
 
-## Base URL
-
-The base URL for this API is: `https://your-api-base-url.com`
-
 ## Endpoints
 
 ### 1. Send a Message to BARD
